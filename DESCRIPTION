@@ -2,6 +2,7 @@ Package: Rmaze
 Type: Package
 Title: A package for generating mazes
 Version: 0.1.0
+Author: Vesna Memisevic (vesna@vesnam.com)
 Authors@R: c(person("Vesna", "Memisevic", email = "vesna@vesnam.com", role = c("aut", "cre")))
 Maintainer: Vesna Memisevic <vesna@vesnam.com>
 Description: A package for generating mazes in R.
