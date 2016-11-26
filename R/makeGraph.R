@@ -26,23 +26,25 @@ makeGraph <- function(nrows=0, ncols=0){
 
   # Create list of edges
   df_hlp = data.frame(node1=c(), node2=c())
-
-  for (i in 1:nrows)
-    for (j in 1:ncols){
-
-      if (i < nrows)
-        df_hlp <- rbind(df_hlp,
-                        data.frame(node1 = paste("A", as.character(i), as.character(j), sep="_"),
-                                   node2 = paste("A", as.character(i+1), as.character(j), sep="_")))
-
-      if (j < ncols)
-        df_hlp <- rbind(df_hlp,
-                        data.frame(node1 = paste("A", as.character(i), as.character(j), sep="_"),
-                                   node2 = paste("A", as.character(i), as.character(j+1), sep="_")))
-    }
-
+   rows <- seq(1, nrows)
+   cols <- seq(1, ncols)
+   nodes <- matrix(seq(length=nrows*ncols), nrows, ncols)
+                           # nodes as integers
+   nodeNames <- outer(rows, cols,
+                      function(i, j) paste("A", i, j, sep="_"))
+   hLinks <- cbind(as.integer(nodes[,-ncol(nodes)]),
+                   as.integer(nodes[,-1]))
+                           # link all nodes (except the rightmost column)
+                           # to the nodes immediately right of them
+   vLinks <- cbind(as.integer(nodes[-nrow(nodes),]),
+                   as.integer(nodes[-1,]))
+                           # link all nodes (except the lowermost row)
+                           # to the nodes immediately below them
+   links <- rbind(hLinks, vLinks)
+   df_hlp <- data.frame(node1=nodeNames[links[,1]],
+                        node2=nodeNames[links[,2]])
   # Create undirected graph from the edge list (data frame)
-  gD <- igraph::simplify(igraph::graph.data.frame(df_hlp, directed=FALSE))
+  gD <- igraph::simplify(igraph::graph_from_data_frame(df_hlp, directed=FALSE))
 
   # Set edge attribute (wall - meaning a wall between cells)
   gD <- igraph::set_edge_attr(gD , "wall", value = "ON")
